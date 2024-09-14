@@ -12,15 +12,19 @@ void printHelp();                         // Function to print help when called
 void gameLoop();                          // Main game loop function
 
 
+//Notes for anthony: Most of the game is done, you just need to add validation to ensure that the players cant override eachother.  Also you need to make the ending screen and
+//have a quit button at all times.  Ending screen needs to have the restart functionality.  You also need to do the win counter.   
+
 int main()
 {
     //Menu Functionality
-    while (0 != 1) {
+    int loop = 1;
+    while (0 != loop) {
         std::string userSelection = menu();
 
         if (userSelection == "Start")
         {
-            gameLoop();
+            gameLoop(); // When the game ends, it will jump back out at this point.  After this if else, should be when you ask if they want to replay quit ect.  
         }
         else if (userSelection == "Help") {
 
@@ -29,6 +33,18 @@ int main()
     }
 
 
+
+
+
+
+
+
+
+
+
+    //Not sure if the code below is the most efficient feel free to do it a different way.
+    // 
+    // 
     //outer loop will be for restarts, exit condition will be input of 'q', standing for exit
     char input = ' ';
     while (input != 'q')
@@ -49,13 +65,6 @@ void gameLoop() {
     printBoard(board);  // Display the initial empty board
 
     while (!isFinished && turn_count < 9) {  // Game ends when the board is full or someone wins
-
-        /* Add condition logic for user input for other commands, for example:
-            std::cout << please choose an option: q (quit), c (continue turn), h (help);
-            std::cin << input;
-
-            switch case statement for all possible outcomes - Note: below  logic will probably need to be encapsulated in one of the conditions
-        */
 
         int x, y;  // Coordinates for the user's move
         std::cout << turn << "'s turn. Enter your move (row and column): ";
@@ -87,6 +96,7 @@ void gameLoop() {
 
 bool isWin(char board[ROWS][COLS], char turn)
 {
+    //checks for various win conditions
     if (board[0][0] == turn && board[0][1] == turn && board[0][2] == turn) // top row filled
         return true; 
     if (board[1][0] == turn && board[1][1] == turn && board[1][2] == turn) // second row filled
@@ -108,6 +118,7 @@ bool isWin(char board[ROWS][COLS], char turn)
 }
 void printBoard(char board[ROWS][COLS])
 {
+    //loops through the 2d board printing out the values
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++)
             std::cout << "|" << board[i][j] << "|";
@@ -122,6 +133,7 @@ void printBoard(char board[ROWS][COLS])
 }
 bool isValidMove(char board[ROWS][COLS], char turn, int x, int y)
 {
+    //checks to make sure the move is within bounds of the game
     if (x >= 0 && x <= 2) {
         return true;
     }
