@@ -14,10 +14,7 @@ void gameLoop();                          // Main game loop function
 
 int main()
 {
-    //Menu section
-    
-    //Exit menu section
-
+    //Menu Functionality
     while (0 != 1) {
         std::string userSelection = menu();
 
@@ -90,15 +87,47 @@ void gameLoop() {
 
 bool isWin(char board[ROWS][COLS], char turn)
 {
-    return 1;
+    if (board[0][0] == turn && board[0][1] == turn && board[0][2] == turn) // top row filled
+        return true; 
+    if (board[1][0] == turn && board[1][1] == turn && board[1][2] == turn) // second row filled
+        return true;
+    if (board[2][0] == turn && board[2][1] == turn && board[2][2] == turn) // third row filled
+        return true;
+    if (board[0][0] == turn && board[1][0] == turn && board[2][0] == turn) // first collumn filled
+        return true;
+    if (board[0][1] == turn && board[1][1] == turn && board[2][1] == turn) // second collumn filled
+        return true;
+    if (board[0][2] == turn && board[1][2] == turn && board[2][2] == turn) // third collumn filled
+        return true;
+    if (board[0][0] == turn && board[1][1] == turn && board[2][2] == turn) // left diagonal filled
+        return true;
+    if (board[0][2] == turn && board[1][1] == turn && board[2][0] == turn) // right diagonal filled
+        return true;
+
+    return false; 
 }
 void printBoard(char board[ROWS][COLS])
 {
-    //enter logic here
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++)
+            std::cout << "|" << board[i][j] << "|";
+        std::cout << std::endl;
+
+        if (i != 2) {
+            std::cout << "---------" << std::endl;
+        }
+   }
+
+
 }
 bool isValidMove(char board[ROWS][COLS], char turn, int x, int y)
 {
-    return 1;
+    if (x >= 0 && x <= 2) {
+        return true;
+    }
+    else {
+        return false; 
+    }
 }
 std::string menu()
 {
