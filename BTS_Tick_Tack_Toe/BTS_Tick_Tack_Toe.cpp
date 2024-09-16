@@ -24,7 +24,7 @@ int main()
 
         if (userSelection == "Start")
         {
-            std::cout << "Input 9 to quit your current game of tic tac toe at any time." << std::endl << std::endl;
+            std::cout << "Input 9 9 to quit your current game of tic tac toe at any time." << std::endl << std::endl;
             winner = gameLoop(); // When the game ends, it will jump back out at this point.  After this if else, should be when you ask if they want to replay quit ect.  
             if (winner == 'X') //Handles updating winner count
             {
