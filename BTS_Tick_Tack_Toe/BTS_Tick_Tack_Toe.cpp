@@ -7,91 +7,106 @@
 bool isWin(char board[ROWS][COLS], char turn);        // Function to check if there is a win condition on the 2D board
 void printBoard(char board[ROWS][COLS]);   // Function to print the current state of the board
 bool isValidMove(char board[ROWS][COLS], char turn, int x, int y);  // Function to validate the move
+void clearBadInput();                               //Function to clear any bad input (strings) from cin
 std::string menu();                              // Function to display the menu
 void printHelp();                         // Function to print help when called 
-void gameLoop();                          // Main game loop function
+char gameLoop();                          // Main game loop function and returns winner for stat keeping
+void displayWins(int x, int o);                    //Displays amount of wins by each side
 
-
-//Notes for anthony: Most of the game is done, you just need to add validation to ensure that the players cant override eachother.  Also you need to make the ending screen and
-//have a quit button at all times.  Ending screen needs to have the restart functionality.  You also need to do the win counter.   
 
 int main()
 {
     //Menu Functionality
-    int loop = 1;
+    int loop = 1, xWins = 0, oWins = 0;
+    char winner;
     while (0 != loop) {
         std::string userSelection = menu();
 
         if (userSelection == "Start")
         {
-            gameLoop(); // When the game ends, it will jump back out at this point.  After this if else, should be when you ask if they want to replay quit ect.  
+            std::cout << "Input 9 to quit your current game of tic tac toe at any time." << std::endl << std::endl;
+            winner = gameLoop(); // When the game ends, it will jump back out at this point.  After this if else, should be when you ask if they want to replay quit ect.  
+            if (winner == 'X') //Handles updating winner count
+            {
+                xWins += 1;
+            }
+            else if (winner == 'O')
+            {
+                oWins += 1;
+            }
         }
         else if (userSelection == "Help") {
 
             printHelp();
         }
-    }
-
-
-
-
-
-
-
-
-
-
-
-    //Not sure if the code below is the most efficient feel free to do it a different way.
-    // 
-    // 
-    //outer loop will be for restarts, exit condition will be input of 'q', standing for exit
-    char input = ' ';
-    while (input != 'q')
-    {
-        /* TODO: need conditional logic that allows end of game or restart or if input is incorrect and must to re-entered*/
-        std::cin >> input;
-    }
-    std::cout << "Thank you for playing" << std::endl;
-    return 0;
+        else if (userSelection == "Wins")
+        {
+            displayWins(xWins, oWins);
+        }
+        else if(userSelection == "badInput") {
+            std::cout << std::endl << "Please enter a valid choice." << std::endl << std::endl;
+        }
+    }    
 }
 
-void gameLoop() {
+void clearBadInput() //Function to clear bad input such as strings
+{
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+char gameLoop() {
     char board[ROWS][COLS] = { {' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '} };  // Initialize 2D array
     char turn = 'X';  // X starts the game
     int turn_count = 0;
     bool isFinished = false;
+    bool isQuit = false;
 
     printBoard(board);  // Display the initial empty board
 
-    while (!isFinished && turn_count < 9) {  // Game ends when the board is full or someone wins
+    while (!isFinished && turn_count < 9 && !isQuit) {  // Game ends when the board is full or someone wins or q is entered to quit
 
         int x, y;  // Coordinates for the user's move
         std::cout << turn << "'s turn. Enter your move (row and column): ";
         std::cin >> x >> y;
+        if (x == 9 || y == 9) //Checks if q was entered to quit game
+        {
+            isQuit = true;
+            isFinished = true;
+        } 
+        else {
+            if (isValidMove(board, turn, x, y)) {
+                board[x][y] = turn;  // Place the current player's mark on the board
+                turn_count++;  // Increment turn counter
+                printBoard(board);  // Print the board after the move
 
-        if (isValidMove(board, turn, x, y)) {
-            board[x][y] = turn;  // Place the current player's mark on the board
-            turn_count++;  // Increment turn counter
-            printBoard(board);  // Print the board after the move
-
-            if (isWin(board, turn)) {  // Check for win condition
-                std::cout << turn << " wins the game!\n";
-                isFinished = true;
+                if (isWin(board, turn)) {  // Check for win condition
+                    std::cout << turn << " wins the game!\n";
+                    return turn;
+                    isFinished = true;
+                }
+                else {
+                    // Switch turn between 'X' and 'O'
+                    turn = (turn == 'X') ? 'O' : 'X';
+                }
             }
             else {
-                // Switch turn between 'X' and 'O'
-                turn = (turn == 'X') ? 'O' : 'X';
+                clearBadInput();
+                std::cout << "Invalid move. Try again.\n";
             }
-        }
-        else {
-            std::cout << "Invalid move. Try again.\n";
-        }
+        }    
     }
 
     if (!isFinished) {
         std::cout << "The game is a tie!\n";
+        return 'T';
     }
+}
+
+void displayWins(int x, int o)
+{
+    std::cout << "X has " << x << " wins." << std::endl;
+    std::cout << "O has " << o << " wins." << std::endl << std::endl;
 }
 
 bool isWin(char board[ROWS][COLS], char turn)
@@ -133,12 +148,33 @@ void printBoard(char board[ROWS][COLS])
 }
 bool isValidMove(char board[ROWS][COLS], char turn, int x, int y)
 {
-    //checks to make sure the move is within bounds of the game
-    if (x >= 0 && x <= 2) {
-        return true;
+   
+    if (x < 0 || y < 0) //Checks if string is entered or bad input
+    {
+        return false;
     }
-    else {
-        return false; 
+
+    if (x >= 0 && x <= 2)         //checks to make sure the move is within bounds of the game, and spot is not occupied by an X or O
+    {
+        if (y >= 0 && y <= 2)
+        {
+            if (board[x][y] == ' ')
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        return false;
     }
 }
 std::string menu()
@@ -149,7 +185,8 @@ std::string menu()
     std::cout << "Please select an option by typing 1,2 or 3" << std::endl;
     std::cout << "(1) Start New Game" << std::endl;
     std::cout << "(2) Help " << std::endl;
-    std::cout << "(3) Exit Game"<< std::endl; 
+    std::cout << "(3) View Wins " << std::endl;
+    std::cout << "(4) Exit Game"<< std::endl; 
 
     //capture user selection
     while (0 != 1) {
@@ -163,10 +200,15 @@ std::string menu()
         }
         else if (userChoice == 3)
         {
+            return "Wins";
+        }
+        else if (userChoice == 4)
+        {
             exit(0);
         }
-        else {
-            std::cout << "Please enter a valid choice" << std::endl;
+        else { //If user input is out of bounds of menu options or a string, can catch, clear cin line, and restart loop
+            clearBadInput();
+            return "badInput";
         }
     }
 }
@@ -203,6 +245,3 @@ void printHelp()
     }
 
 }
-
-
-
