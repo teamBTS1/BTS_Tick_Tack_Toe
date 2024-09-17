@@ -134,6 +134,7 @@ bool isWin(char board[ROWS][COLS], char turn)
 void printBoard(char board[ROWS][COLS])
 {
     //loops through the 2d board printing out the values
+    std::cout << std::endl; //Adds spacing to make neater
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++)
             std::cout << "|" << board[i][j] << "|";
@@ -143,8 +144,7 @@ void printBoard(char board[ROWS][COLS])
             std::cout << "---------" << std::endl;
         }
    }
-
-
+    std::cout << std::endl; //Adding spacing to make neater
 }
 bool isValidMove(char board[ROWS][COLS], char turn, int x, int y)
 {
@@ -231,6 +231,10 @@ void printHelp()
     {
         return; 
     }
+    else //If 1 is not entered clear input
+    {
+        clearBadInput();
+    }
 
     //if the input isnt 1, the code will ask for a valid input
     while (x != 1)
@@ -241,6 +245,10 @@ void printHelp()
         if (x == 1)
         {
           return;
+        }
+        else
+        {
+            clearBadInput(); //If 1 is not entered clear input
         }
     }
 
